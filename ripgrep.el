@@ -45,6 +45,11 @@
 ;; Customization
 ;; --------------------------
 
+(defgroup ripgrep nil
+  "Ripgrep"
+  :group 'tools
+  :group 'matching)
+
 
 (defcustom ripgrep-executable
   "rg"
