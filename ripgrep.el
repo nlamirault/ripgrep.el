@@ -116,7 +116,7 @@ This requires the ripgrep command to support --color-match, which is only in v0.
 
 
 (define-compilation-mode ripgrep-search-mode "Ripgrep"
-  "Platinum searcher results compilation mode"
+  "Ripgrep results compilation mode"
   (set (make-local-variable 'truncate-lines) t)
   (set (make-local-variable 'compilation-disable-input) t)
   (set (make-local-variable 'tool-bar-map) grep-mode-tool-bar-map)
