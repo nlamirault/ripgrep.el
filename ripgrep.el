@@ -172,7 +172,7 @@ This function is called from `compilation-filter-hook'."
                 (append (list ripgrep-executable)
                         ripgrep-arguments
                         args
-                        '("--vimgrep")
+                        '("--no-heading --vimgrep")
                         (list (shell-quote-argument regexp) ".")) " ")
      'ripgrep-search-mode)))
 
