@@ -121,7 +121,7 @@ This requires the ripgrep command to support --color-match, which is only in v0.
   (set (make-local-variable 'compilation-disable-input) t)
   (set (make-local-variable 'tool-bar-map) grep-mode-tool-bar-map)
   (let ((symbol 'compilation-ripgrep)
-        (pattern '("^\\([^:\n]+?\\):\\([0-9]+\\):[^0-9]" 1 2)))
+        (pattern '("^\\([^:\n]+?\\):\\([0-9]+\\):\\([0-9]+\\):" 1 2 3)))
     (set (make-local-variable 'compilation-error-regexp-alist) (list symbol))
     (set (make-local-variable 'compilation-error-regexp-alist-alist) (list (cons symbol pattern))))
   (set (make-local-variable 'compilation-error-face) 'ripgrep-hit-face)
@@ -130,7 +130,7 @@ This requires the ripgrep command to support --color-match, which is only in v0.
 
 ;; Taken from grep-filter, just changed the color regex.
 (defun ripgrep-filter ()
-  "Handle match highlighting escape sequences inserted by the ag process.
+  "Handle match highlighting escape sequences inserted by the rg process.
 This function is called from `compilation-filter-hook'."
   (when ripgrep-highlight-search
     (save-excursion
@@ -143,7 +143,7 @@ This function is called from `compilation-filter-hook'."
         ;; escape sequence in one chunk and the rest in another.
         (when (< (point) end)
           (setq end (copy-marker end))
-          ;; Highlight ag matches and delete marking sequences.
+          ;; Highlight rg matches and delete marking sequences.
           (while (re-search-forward "\033\\[30;43m\\(.*?\\)\033\\[[0-9]*m" end 1)
             (replace-match (propertize (match-string 1)
                                        'face nil 'font-lock-face 'ripgrep-match-face)
@@ -172,7 +172,7 @@ This function is called from `compilation-filter-hook'."
                 (append (list ripgrep-executable)
                         ripgrep-arguments
                         args
-                        '("--no-heading")
+                        '("--no-heading --vimgrep")
                         (list (shell-quote-argument regexp) ".")) " ")
      'ripgrep-search-mode)))
 
