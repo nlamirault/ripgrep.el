@@ -6,6 +6,7 @@
 ;; Version: 0.3.0
 ;; Keywords : ripgrep projectile
 ;; Homepage: https://github.com/nlamirault/ripgrep.el
+;; Package-Requires: ((ripgrep "0.3.0") (projectile "0.14.0"))
 
 ;;; Commentary:
 
@@ -46,13 +47,11 @@
   (interactive
    (list
     (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
-  (if (fboundp 'projectile-project-root)
-      (ripgrep-regexp regexp
-                   (projectile-project-root)
-                   (mapcar (lambda (val) (concat "--not-file-matches=" val))
-                           (append projectile-globally-ignored-files
-                                   projectile-globally-ignored-directories)))
-    (error "Projectile is not available")))
+  (ripgrep-regexp regexp
+                  (projectile-project-root)
+                  (mapcar (lambda (val) (concat "--not-file-matches=" val))
+                          (append projectile-globally-ignored-files
+                                  projectile-globally-ignored-directories))))
 
 
 (provide 'projectile-ripgrep)
