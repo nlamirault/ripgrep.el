@@ -3,7 +3,7 @@
 ;; Copyright (C) 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;;
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
-;; Version: 0.3.0
+;; Version: 0.4.0
 ;; Keywords : ripgrep projectile
 ;; Homepage: https://github.com/nlamirault/ripgrep.el
 
@@ -49,7 +49,8 @@
   (if (fboundp 'projectile-project-root)
       (ripgrep-regexp regexp
                    (projectile-project-root)
-                   (mapcar (lambda (val) (concat "--not-file-matches=" val))
+                   (mapcar (lambda (val)
+                             (concat "-g '!" val "'"))
                            (append projectile-globally-ignored-files
                                    projectile-globally-ignored-directories)))
     (error "Projectile is not available")))
