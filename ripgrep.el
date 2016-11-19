@@ -7,11 +7,6 @@
 ;; Keywords : ripgrep ack pt ag sift grep search
 ;; Homepage: https://github.com/nlamirault/ripgrep.el
 
-;;; Commentary:
-
-;; Please see README.md for documentation, or read it online at
-;; https://github.com/nlamirault/ripgrep.el
-
 ;;; License:
 
 ;; This program is free software; you can redistribute it and/or
