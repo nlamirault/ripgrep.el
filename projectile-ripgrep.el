@@ -49,7 +49,7 @@
     (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
   (ripgrep-regexp regexp
                   (projectile-project-root)
-                  (mapcar (lambda (val) (concat "--not-file-matches=" val))
+                  (mapcar (lambda (val) (concat "--glob !" val))
                           (append projectile-globally-ignored-files
                                   projectile-globally-ignored-directories))))
 
