@@ -24,6 +24,9 @@ or [Cask][]:
 	(depends-on "ripgrep")
 
 
+There is also [projectile-ripgrep](https://melpa.org/#/projectile-ripgrep) if you want to use it using [projectile](https://github.com/bbatsov/projectile)
+
+
 ## Usage
 
 <kbd>M-x ripgrep-regexp</kbd> or <kbd>M-x projectile-ripgrep</kbd>
