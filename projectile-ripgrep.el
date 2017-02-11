@@ -1,11 +1,12 @@
 ;;; projectile-ripgrep.el --- Run ripgrep with Projectile
 
-;; Copyright (C) 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2016, 2017 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;;
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;; Version: 0.4.0
 ;; Keywords : ripgrep projectile
 ;; Homepage: https://github.com/nlamirault/ripgrep.el
+;; Package-Requires: ((ripgrep "0.3.0") (projectile "0.14.0"))
 
 ;;; Commentary:
 
@@ -46,14 +47,11 @@
   (interactive
    (list
     (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
-  (if (fboundp 'projectile-project-root)
-      (ripgrep-regexp regexp
-                   (projectile-project-root)
-                   (mapcar (lambda (val)
-                             (concat "-g '!" val "'"))
-                           (append projectile-globally-ignored-files
-                                   projectile-globally-ignored-directories)))
-    (error "Projectile is not available")))
+  (ripgrep-regexp regexp
+                  (projectile-project-root)
+                  (mapcar (lambda (val) (concat "--glob !" val))
+                          (append projectile-globally-ignored-files
+                                  projectile-globally-ignored-directories))))
 
 
 (provide 'projectile-ripgrep)
