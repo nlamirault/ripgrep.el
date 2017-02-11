@@ -1,5 +1,11 @@
 # ripgrep.el ChangeLog
 
+# Version 0.4.0 (02/11/2017)
+
+- [#19](https://github.com/nlamirault/ripgrep.el/issues/19): : add a prefix test-helper
+- [#9](https://github.com/nlamirault/ripgrep.el/issues/9): Add *projectile-ripgrep* to Melpa
+- [#10](https://github.com/nlamirault/ripgrep.el/issues/10): `Unknown flag: '--not-file-matches'
+
 # Version 0.3.0 (11/16/2016)
 
 - `#7`: invalid pattern in ripgrep-search-mode (thanks kanru)
