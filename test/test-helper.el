@@ -1,6 +1,6 @@
 ;; test-helper.el --- Test helpers for ripgrep.el
 
-;; Copyright (C) 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2016, 2017 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;; Homepage: https://github.com/nlamirault/ripgrep.el
