@@ -1,4 +1,4 @@
-;; test-helper.el --- Test helpers for ripgrep.el
+;; ripgrep-test-helper.el --- Test helpers for ripgrep.el
 
 ;; Copyright (C) 2016, 2017 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
@@ -35,7 +35,7 @@
 (setq debugger-batch-max-lines (+ 50 max-lisp-eval-depth)
       debug-on-error t)
 
-(defvar username (getenv "HOME"))
+(defvar ripgrep-test-helper-username (getenv "HOME"))
 
 (defconst ripgrep-testsuite-dir
   (f-parent (f-this-file))
@@ -49,16 +49,16 @@
   (f-expand "sandbox" ripgrep-testsuite-dir)
   "The sandbox path for ripgrep.")
 
-(defun cleanup-load-path ()
+(defun ripgrep-test-helper-cleanup-load-path ()
   "Remove home directory from 'load-path."
   (message (ansi-green "[ripgrep] Cleanup path"))
   (mapc #'(lambda (path)
-            (when (string-match (s-concat username "/.emacs.d") path)
+            (when (string-match (s-concat ripgrep-test-helper-username "/.emacs.d") path)
               (message (ansi-yellow "Suppression path %s" path))
               (setq load-path (delete path load-path))))
         load-path))
 
-(defun load-unit-tests (path)
+(defun ripgrep-test-helper-load-unit-tests (path)
   "Load all unit test from PATH."
   (message (ansi-green "[ripgrep] Execute unit tests %s"
                        path))
@@ -66,7 +66,7 @@
     (load test-file nil t)))
 
 
-(defun load-library (file)
+(defun ripgrep-test-helper-load-library (file)
   "Load current library from FILE."
   (let ((path (s-concat ripgrep-source-dir file)))
     (message (ansi-yellow "[ripgrep] Load library from %s" path))
@@ -74,7 +74,7 @@
     (require 'ripgrep path)))
 
 
-(defmacro with-test-sandbox (&rest body)
+(defmacro ripgrep-test-helper-with-test-sandbox (&rest body)
   "Evaluate BODY in an empty sandbox directory."
   `(unwind-protect
        (condition-case nil ;ex
@@ -87,5 +87,5 @@
          )))
 
 
-(provide 'test-helper)
-;;; test-helper.el ends here
+(provide 'ripgrep-test-helper)
+;;; ripgrep-test-helper.el ends here

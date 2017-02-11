@@ -21,8 +21,7 @@
 
 ;;; Code:
 
-
-(require 'test-helper)
+;;(require 'ripgrep-test-helper)
 
 (ert-deftest ripgrep-library-version ()
   :tags '(version)
