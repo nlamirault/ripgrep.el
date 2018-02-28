@@ -183,6 +183,7 @@ This function is called from `compilation-filter-hook'."
                         args
                         '("--no-heading --vimgrep -n")
                         (when ripgrep-highlight-search '("--color=always"))
+                        '("--")
                         (list (shell-quote-argument regexp) ".")) " ")
      'ripgrep-search-mode)))
 
