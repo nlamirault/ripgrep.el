@@ -60,7 +60,7 @@ regular expression."
                               projectile-globally-ignored-directories))))
     (ripgrep-regexp search-term
                     (projectile-project-root)
-                    (if current-prefix-arg
+                    (if arg
                         args
                       (cons "--fixed-strings" args)))))
 
