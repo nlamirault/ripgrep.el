@@ -49,7 +49,7 @@
 (require 'compile)
 (require 'grep)
 (require 'thingatpt)
-
+(require 'wgrep nil 'noerror) ;; optional
 
 ;; Customization
 ;; --------------------------
@@ -105,6 +105,8 @@ This requires the ripgrep command to support --color-match, which is only in v0.
 ;; Mode
 ;; --------------------------
 
+(defvar ripgrep--base-arguments '("--no-heading" "--line-number" "--with-filename")
+  "Options that are always applied to ripgrep commands.")
 
 (defvar ripgrep-search-finished-hook nil
   "Hook run when ripgrep completes a search in a buffer.")
@@ -114,6 +116,12 @@ This requires the ripgrep command to support --color-match, which is only in v0.
   (with-current-buffer buffer
     (run-hooks 'ripgrep-search-finished-hook)))
 
+(defun ripgrep/kill-buffer ()
+  "Kill the ripgrep search buffer."
+  (interactive)
+  (let ((kill-buffer-query-functions))
+    (kill-buffer)))
+
 (defvar ripgrep-search-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map compilation-minor-mode-map)
@@ -121,10 +129,9 @@ This requires the ripgrep command to support --color-match, which is only in v0.
     (define-key map "n" 'compilation-next-error)
     (define-key map "{" 'compilation-previous-file)
     (define-key map "}" 'compilation-next-file)
-    (define-key map "k" '(lambda ()
-                           (interactive)
-                           (let ((kill-buffer-query-functions))
-                             (kill-buffer))))
+    (define-key map "k" 'ripgrep/kill-buffer)
+    (define-key map "C-c C-p" 'wgrep-change-to-wgrep-mode)
+
     map)
   "Keymap for ripgrep-search buffers.
 `compilation-minor-mode-map' is a cdr of this.")
@@ -155,11 +162,14 @@ This gets tacked on the end of the generated expressions.")
   (set (make-local-variable 'compilation-disable-input) t)
   (set (make-local-variable 'tool-bar-map) grep-mode-tool-bar-map)
   (let ((symbol 'compilation-ripgrep)
-        (pattern '("^\\([^:\n]+?\\):\\([0-9]+\\):\\([0-9]+\\):" 1 2 3)))
+        (pattern '("^\\([^:\n]+?\\):\\([0-9]+\\):" 1 2)))
     (set (make-local-variable 'compilation-error-regexp-alist) (list symbol))
     (set (make-local-variable 'compilation-error-regexp-alist-alist) (list (cons symbol pattern))))
   (set (make-local-variable 'compilation-error-face) 'ripgrep-hit-face)
-  (add-hook 'compilation-filter-hook 'ripgrep-filter nil t))
+  (add-hook 'compilation-filter-hook 'ripgrep-filter nil t)
+  (when (featurep 'wgrep)
+    (add-hook 'ripgrep-search-mode-hook 'wgrep-remove-all-change nil t)
+    (add-hook 'ripgrep-search-mode-hook 'wgrep-setup)))
 
 (defvar ripgrep--match-regexp "\e\\[[0-9]*m\e\\[[0-9]*1m\e\\[[0-9]*1m\\(.*?\\)\e\\[[0-9]*0m"
   "Used in `ripgrep-filter' to search for the match via ANSI escape codes")
@@ -206,7 +216,7 @@ This function is called from `compilation-filter-hook'."
                 (append (list ripgrep-executable)
                         ripgrep-arguments
                         args
-                        '("--no-heading --vimgrep -n")
+                        ripgrep--base-arguments
                         (when ripgrep-highlight-search '("--color=always"))
                         (when (and case-fold-search
                                    (isearch-no-upper-case-p regexp t))
