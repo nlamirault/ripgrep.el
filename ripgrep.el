@@ -84,14 +84,20 @@ This requires the ripgrep command to support --color-match, which is only in v0.
 ;; Faces
 ;; --------------------------
 
-
 (defface ripgrep-hit-face '((t :inherit compilation-info))
-  "Face name to use for ripgrep matches."
+  "Face name to use for ripgrep hits."
   :group 'ripgrep)
-
 
 (defface ripgrep-match-face '((t :inherit match))
   "Face name to use for ripgrep matches."
+  :group 'ripgrep)
+
+(defface ripgrep-error-face '((t :inherit compilation-error))
+  "Face name to use for ripgrep errors."
+  :group 'ripgrep)
+
+(defface ripgrep-context-face '((t :inherit shadow))
+  "Face name to use for ripgrep errors."
   :group 'ripgrep)
 
 
@@ -123,6 +129,25 @@ This requires the ripgrep command to support --color-match, which is only in v0.
   "Keymap for ripgrep-search buffers.
 `compilation-minor-mode-map' is a cdr of this.")
 
+;; from grep-mode-font-lock-keywords
+(defvar ripgrep-search-mode-font-lock-keywords
+   '(;; Command output lines.
+     (": \\(.+\\): \\(?:Permission denied\\|No such \\(?:file or directory\\|device or address\\)\\)$"
+      1 'ripgrep-error-face)
+     ;; remove match from grep-regexp-alist before fontifying
+     ("^Ripgrep[/a-zA-z]* \\(started\\|finished\\).*"
+      (0 '(face nil compilation-message nil help-echo nil mouse-face nil) t))
+     ("^Ripgrep[/a-zA-z]* \\(exited abnormally\\|interrupt\\|killed\\|terminated\\)\\(?:.*with code \\([0-9]+\\)\\)?.*"
+      (0 '(face nil compilation-message nil help-echo nil mouse-face nil) t)
+      (1 'ripgrep-error-face)
+      (2 'ripgrep-error-face nil t))
+     ;; "filename-linenumber-" format is used for context lines in GNU grep,
+     ;; "filename=linenumber=" for lines with function names in "git grep -p".
+     ("^.+?\\([-=\0]\\)[0-9]+\\([-=]\\).*\n" (0 'ripgrep-context-face)
+      (1 (if (eq (char-after (match-beginning 1)) ?\0)
+             `(face nil display ,(match-string 2))))))
+   "Additional things to highlight in ripgrep output.
+This gets tacked on the end of the generated expressions.")
 
 (define-compilation-mode ripgrep-search-mode "Ripgrep"
   "Ripgrep results compilation mode"
@@ -136,6 +161,8 @@ This requires the ripgrep command to support --color-match, which is only in v0.
   (set (make-local-variable 'compilation-error-face) 'ripgrep-hit-face)
   (add-hook 'compilation-filter-hook 'ripgrep-filter nil t))
 
+(defvar ripgrep--match-regexp "\e\\[[0-9]*m\e\\[[0-9]*1m\e\\[[0-9]*1m\\(.*?\\)\e\\[[0-9]*0m"
+  "Used in `ripgrep-filter' to search for the match via ANSI escape codes")
 
 ;; Taken from grep-filter, just changed the color regex.
 (defun ripgrep-filter ()
@@ -153,7 +180,7 @@ This function is called from `compilation-filter-hook'."
         (when (< (point) end)
           (setq end (copy-marker end))
           ;; Highlight rg matches and delete marking sequences.
-          (while (re-search-forward "\033\\[m\033\\[31m\033\\[1m\\(.*?\\)\033\\[[0-9]*m" end 1)
+          (while (re-search-forward ripgrep--match-regexp end 1)
             (replace-match (propertize (match-string 1)
                                        'face nil 'font-lock-face 'ripgrep-match-face)
                            t t))
@@ -161,8 +188,6 @@ This function is called from `compilation-filter-hook'."
           (goto-char beg)
           (while (re-search-forward "\033\\[[0-9;]*[mK]" end 1)
             (replace-match "" t t)))))))
-
-
 
 ;; API
 ;; --------------------------
