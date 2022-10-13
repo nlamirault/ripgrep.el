@@ -55,7 +55,7 @@ regular expression."
                                                                      "")))
                           (projectile-symbol-or-selection-at-point))
     current-prefix-arg))
-  (let ((args (mapcar (lambda (val) (concat "--glob !" val))
+  (let ((args (mapcar (lambda (val) (concat "--glob \\!" val))
                       (append (projectile-ignored-files-rel)
                               (projectile-ignored-directories-rel)))))
     (ripgrep-regexp search-term
